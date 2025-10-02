@@ -1,3 +1,5 @@
+
+typedef Point<ll> P;
 P dir;
 bool half(P p){
     return dir.cross(p) < 0 || (dir.cross(p) == 0 && dir.dot(p) > 0);
