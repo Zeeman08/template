@@ -1,0 +1,6 @@
+1. DSU on trees
+2. Minkowski Sum 
+3. Half plane intersection
+4. Aho Corasick
+5. Game Theory cheatsheet
+6. Persistent Segtree
