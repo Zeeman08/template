@@ -17,49 +17,64 @@
 
 #include "../data-structures/LazySegmentTree.h"
 
-template <bool VALS_EDGES> struct HLD {
-	int N, tim = 0;
-	vector<vi> adj;
-	vi par, siz, rt, pos;
-	Node *tree;
-	HLD(vector<vi> adj_)
-		: N(sz(adj_)), adj(adj_), par(N, -1), siz(N, 1),
-		  rt(N),pos(N),tree(new Node(0, N)){ dfsSz(0); dfsHld(0); }
-	void dfsSz(int v) {
-		for (int& u : adj[v]) {
-			adj[u].erase(find(all(adj[u]), v));
-			par[u] = v;
-			dfsSz(u);
-			siz[v] += siz[u];
-			if (siz[u] > siz[adj[v][0]]) swap(u, adj[v][0]);
+template<bool VALS_IN_EDGES> struct HLD { 
+	int N; vector<vi> adj;  
+	vi par, root, depth, sz, pos;
+	int ti; vi rpos;
+    lazy_segtree<S, op, e, F, 
+    mapping, composition, id> tree;
+    HLD(int N) : N(N), adj(N), par(N), root(N),
+     depth(N), sz(N), pos(N), tree(N) {}
+	void ae(int x, int y) { adj[x].pb(y), adj[y].pb(x); }
+	void dfsSz(int x) { 
+		sz[x] = 1; 
+		trav(y,adj[x]) {
+			par[y] = x; depth[y] = depth[x]+1;
+			adj[y].erase(find(all(adj[y]),x));
+			dfsSz(y); sz[x] += sz[y];
+			if (sz[y] > sz[adj[x][0]]) swap(y,adj[x][0]);
 		}
 	}
-	void dfsHld(int v) {
-		pos[v] = tim++;
-		for (int u : adj[v]) {
-			rt[u] = (u == adj[v][0] ? rt[v] : u);
-			dfsHld(u);
-		}
+	void dfsHld(int x) {
+		pos[x] = ti++; rpos.pb(x);
+		trav(y,adj[x]) {
+			root[y] = (y == adj[x][0] ? root[x] : y);
+			dfsHld(y); }
 	}
-	template <class B> void process(int u, int v, B op) {
-		for (;; v = par[rt[v]]) {
-			if (pos[u] > pos[v]) swap(u, v);
-			if (rt[u] == rt[v]) break;
-			op(pos[rt[v]], pos[v] + 1);
-		}
-		op(pos[u] + VALS_EDGES, pos[v] + 1);
+	void init(vector<tuple<int, int, int>> ed, int R = 0) {
+        // ed is empty if the edge has
+        // no initial weight
+        // for node: tree.set(pos[node],val)
+        par[R] = depth[R] = ti = 0; dfsSz(R); 
+		root[R] = R; dfsHld(R); 
+        for(auto [u, v, c] : ed) {
+            int idx=-1;
+            if(u==par[v]) idx=pos[v];
+            else idx=pos[u];
+            tree.set(idx, {c, 1});
+        }
 	}
-	void modifyPath(int u, int v, int val) {
-		process(u, v, [&](int l, int r) { tree->add(l, r, val); });
+	int lca(int x, int y) {
+		for (; root[x] != root[y]; y = par[root[y]])
+			if (depth[root[x]] > depth[root[y]]) swap(x,y);
+		return depth[x] < depth[y] ? x : y;
 	}
-	int queryPath(int u, int v) { // Modify depending on problem
-		int res = -1e9;
-		process(u, v, [&](int l, int r) {
-				res = max(res, tree->query(l, r));
-		});
-		return res;
+	template <class BinaryOp>
+	void processPath(int x, int y, BinaryOp op) {
+		for (; root[x] != root[y]; y = par[root[y]]) {
+			if (depth[root[x]] > depth[root[y]]) swap(x,y);
+			op(pos[root[y]],pos[y]); }
+		if (depth[x] > depth[y]) swap(x,y);
+		op(pos[x]+VALS_IN_EDGES,pos[y]); 
 	}
-	int querySubtree(int v) { // modifySubtree is similar
-		return tree->query(pos[v] + VALS_EDGES, pos[v] + siz[v]);
-	}
+	void modifyPath(int x, int y, int v) { 
+		processPath(x,y,[this,&v](int l, int r) { 
+			tree.apply(l,r+1,F(v)); }); }
+	mint queryPath(int x, int y) { 
+		mint res = e().x; 
+		processPath(x,y,[this,&res](int l, int r) { 
+			res += tree.prod(l,r+1).x; });
+		return res; }
+	void modifySubtree(int x, int v) { 
+		tree.apply(pos[x]+VALS_IN_EDGES,pos[x]+sz[x]-1,F(v)); }
 };
