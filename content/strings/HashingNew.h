@@ -1,3 +1,11 @@
+/**
+ * Author: Me
+ * Date: 2009-08-03
+ * License: CC0
+ * Source: My head
+ * Description: as it says.
+ * Status: tested
+ */
 long long binpow(long long a, long long b, long long m) {
     a %= m;
     long long res = 1;
@@ -50,7 +58,6 @@ void calc_pow() {
         pinv_pow[j] = (pinv_pow[j-1] * pinv_pow[1]) % _mods;
     }
 }
-
 
 class hashing {
     public:

@@ -1,3 +1,12 @@
+/**
+ * Author: Me
+ * Date: 2009-08-03
+ * License: CC0
+ * Source: My head
+ * Description: as it says.
+ * Status: tested
+ */
+
 //q(1) -> a[k][i] = x
 //q(2) -> a[k][l] + ... + a[k][r]
 //a(3) -> append(a[k]), n += 1

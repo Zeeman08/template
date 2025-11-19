@@ -1,4 +1,11 @@
-
+/**
+ * Author: Me
+ * Date: 2009-08-03
+ * License: CC0
+ * Source: My head
+ * Description: as it says.
+ * Status: tested
+ */
 typedef Point<ll> P;
 P dir;
 bool half(P p){

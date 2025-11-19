@@ -1,5 +1,12 @@
-
-//Let st[v] dfs starting time of vertex v, ft[v] be it's finishing time and ver[time] is the vertex which it's starting time is equal to time.
+/**
+ * Author: Me
+ * Date: 2009-08-03
+ * License: CC0
+ * Source: My head
+ * Description: as it says.
+ * Status: tested
+ */
+//Let st[v] dfs starting time of vertex v, ft[v] be it's finishing time and ver[time] is the vertex for which it's starting time is equal to time.
 int cnt[maxn];
 void dfs(int v, int p, bool keep){
     int mx = -1, bigChild = -1;
