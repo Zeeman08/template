@@ -1,53 +1,49 @@
 /**
- * Author: chilli
+ * Author: benq
  * Date: 2019-04-26
  * License: CC0
  * Source: https://cp-algorithms.com/graph/dinic.html
- * Description: Flow algorithm with complexity $O(VE\log U)$ where $U = \max |\text{cap}|$.
- * $O(\min(E^{1/2}, V^{2/3})E)$ if $U = 1$; $O(\sqrt{V}E)$ for bipartite matching.
+ * Description: Fast flow. After computing flow, edges $\{u,v\}$ such that 
+	* $lev[u] \neq -1,$ $lev[v] = -1$ are part of min cut.
+	* $O(N^2M)$ flow, $O(M\sqrt N)$ bipartite matching
  * Status: Tested on SPOJ FASTFLOW and SPOJ MATCHING, stress-tested
  */
 #pragma once
-
 struct Dinic {
-	struct Edge {
-		int to, rev;
-		ll c, oc;
-		ll flow() { return max(oc - c, 0LL); } // if you need flows
-	};
-	vi lvl, ptr, q;
-	vector<vector<Edge>> adj;
-	Dinic(int n) : lvl(n), ptr(n), q(n), adj(n) {}
-	void addEdge(int a, int b, ll c, ll rcap = 0) {
-		adj[a].push_back({b, sz(adj[b]), c, c});
-		adj[b].push_back({a, sz(adj[a]) - 1, rcap, rcap});
+	using F = ll; // flow type
+	struct Edge { int to; F flo, cap, id; };
+	int N; V<Edge> eds; V<vi> adj;
+	void init(int _N) { N = _N; adj.rsz(N), cur.rsz(N); }
+	void ae(int u, int v, F cap, int id, F rcap = 0) { assert(min(cap,rcap) >= 0); 
+		adj[u].pb(sz(eds)); eds.pb({v,0,cap,id});
+		adj[v].pb(sz(eds)); eds.pb({u,0,rcap, -1});
 	}
-	ll dfs(int v, int t, ll f) {
-		if (v == t || !f) return f;
-		for (int& i = ptr[v]; i < sz(adj[v]); i++) {
-			Edge& e = adj[v][i];
-			if (lvl[e.to] == lvl[v] + 1)
-				if (ll p = dfs(e.to, t, min(f, e.c))) {
-					e.c -= p, adj[e.to][e.rev].c += p;
-					return p;
-				}
+	vi lev; V<vi::iterator> cur;
+	bool bfs(int s, int t) { // level = shortest distance from source
+		lev = vi(N,-1); F0R(i,N) cur[i] = begin(adj[i]);
+		queue<int> q({s}); lev[s] = 0; 
+		while (sz(q)) { int u = q.front(); q.pop();
+			trav(e,adj[u]) { const Edge& E = eds[e];
+				int v = E.to; if (lev[v] < 0 && E.flo < E.cap) 
+					q.push(v), lev[v] = lev[u]+1;
+			}
+		}
+		return lev[t] >= 0;
+	}
+	F dfs(int v, int t, F flo) {
+		if (v == t) return flo;
+		for (; cur[v] != end(adj[v]); cur[v]++) {
+			Edge& E = eds[*cur[v]];
+			if (lev[E.to]!=lev[v]+1||E.flo==E.cap) continue;
+			F df = dfs(E.to,t,min(flo,E.cap-E.flo));
+			if (df) { E.flo += df; eds[*cur[v]^1].flo -= df;
+				return df; } // saturated >=1 one edge
 		}
 		return 0;
 	}
-	ll calc(int s, int t) {
-		ll flow = 0; q[0] = s;
-		rep(L,0,31) do { // 'int L=30' maybe faster for random data
-			lvl = ptr = vi(sz(q));
-			int qi = 0, qe = lvl[s] = 1;
-			while (qi < qe && !lvl[t]) {
-				int v = q[qi++];
-				for (Edge e : adj[v])
-					if (!lvl[e.to] && e.c >> (30 - L))
-						q[qe++] = e.to, lvl[e.to] = lvl[v] + 1;
-			}
-			while (ll p = dfs(s, t, LLONG_MAX)) flow += p;
-		} while (lvl[t]);
-		return flow;
+	F maxFlow(int s, int t) {
+		F tot = 0; while (bfs(s,t)) while (F df = 
+			dfs(s,t,numeric_limits<F>::max())) tot += df;
+		return tot;
 	}
-	bool leftOfMinCut(int a) { return lvl[a] != 0; }
-};
+};	
