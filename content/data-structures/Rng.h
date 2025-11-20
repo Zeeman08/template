@@ -10,6 +10,7 @@
 #pragma once
 
 mt19937 rng(random_device{}());
+//alternatively: mt19937 rng((uint32_t)chrono::steady_clock::now().time_since_epoch().count());
 ll rnd(ll r) {
     return rng() % r;
 }
