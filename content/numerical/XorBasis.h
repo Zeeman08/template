@@ -3,7 +3,6 @@
  * License: CC0
  * Source: snuke-san
  * Description: Given n integers, find l-th to r-th integers that can be formed by xor-ing any subset of the integers.
- * Status : ABC283-G Checked
  */
 
 int n; ll l, r; cin >> n >> l >> r;
