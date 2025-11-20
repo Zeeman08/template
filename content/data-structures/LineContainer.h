@@ -5,6 +5,9 @@
  * Source: own work
  * Description: Container where you can add lines of the form kx+m, and query maximum values at points x.
  *  Useful for dynamic programming (``convex hull trick'').
+ * Usage: 
+ * Max queries: lc.insert(m, c); result = lc.query(x)
+ * Min queries: lc.insert(-m, -c); result = -lc.query(x)
  * Time: O(\log N)
  * Status: stress-tested
  */
