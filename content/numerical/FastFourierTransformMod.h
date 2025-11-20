@@ -8,6 +8,7 @@
  * Inputs must be in $[0, \text{mod})$.
  * Time: O(N \log N), where $N = |A|+|B|$ (twice as slow as NTT or FFT)
  * Status: stress-tested
+ * Usage: vl a, b; vl c = convMod<MOD>(a, b);
  * Details: An in-depth examination of precision for both FFT and FFTMod can be found
  * here (https://github.com/simonlindholm/fft-precision/blob/master/fft-precision.md)
  */
