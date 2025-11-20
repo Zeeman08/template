@@ -19,12 +19,15 @@ struct Node {
     bool rev = false; 
     int sum, add = 0;      
 	bool has_add = 0; 
-    Node(char val) : val(val), y(rand()) {}
+    Node(char val) : val(val), sum(val-'a'), y(rand()) {}
     void recalc();
 };
 int cnt(Node* n) { return n ? n->c : 0; }
 void Node::recalc() {
     c = 1 + cnt(l) + cnt(r);
+	sum = val-'a';
+	if (l) sum += l->sum;
+	if (r) sum += r->sum;
 }
 void push(Node* n) {   // push the reverse flag down
     if (!n) return;
