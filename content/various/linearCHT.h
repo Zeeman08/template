@@ -4,19 +4,19 @@
  * Source: Rubaiyat
  * Description: Linear CHT.
  */
-/**
-Linear Convex Hull Trick
-Requirement:
-    Minimum:
-        M increasing, x decreasing, useless(s-1, s-2, s-3)
-        M decreasing, x increasing, useless(s-3, s-2, s-1)
-    Maximum:
-        M increasing, x increasing, useless(s-3, s-2, s-1)
-        M decreasing, x decreasing, useless(s-1, s-2, s-3)
-If queries are in arbitrary order, use query2 O(logn) per query.
-Source: Rezwan, Anachor (query2)
-**/
-typedef long long LL;
+ typedef long long LL;
+ /*
+ Linear Convex Hull Trick
+ Requirement:
+     Minimum:
+         M increasing, x decreasing, useless(s-1, s-2, s-3)
+         M decreasing, x increasing, useless(s-3, s-2, s-1)
+     Maximum:
+         M increasing, x increasing, useless(s-3, s-2, s-1)
+         M decreasing, x decreasing, useless(s-1, s-2, s-3)
+ If queries are in arbitrary order, use query2 O(logn) per query.
+ Source: Rezwan, Anachor (query2)
+ */
 //current implementation: M decreasing, x increasing
 struct CHT {
     vector<LL> M;
