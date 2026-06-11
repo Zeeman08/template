@@ -19,8 +19,7 @@
  */
 //current implementation: M decreasing, x increasing
 struct CHT {
-    vector<LL> M;
-    vector<LL> C;
+    vector<LL> M; vector<LL> C;
     int ptr = 0;
     ///Use double comp if M,C is LL range
     bool useless(int l1, int l2, int l3) {
@@ -30,13 +29,10 @@ struct CHT {
         return M[id]*x+C[id];
     }
     void add(LL m, LL c) {
-        M.push_back(m);
-        C.push_back(c);
+        M.push_back(m); C.push_back(c);
         int s = M.size();
         while (s >= 3 && useless(s-3, s-2, s-1)) {
-            M.erase(M.end()-2);
-            C.erase(C.end()-2);
-            s--;
+            M.erase(M.end()-2); C.erase(C.end()-2); s--;
         }
     }
     LL query(LL x) {
@@ -58,7 +54,6 @@ int main() {
     /*preprocessing*/
     CHT cht;
     for (int i=1; i<=n; i++) {
-        cht.add(t[i-1].second, dp[i-1]);
-        dp[i] = cht.query(t[i-1].first);
+        cht.add(t[i-1].second, dp[i-1]); dp[i] = cht.query(t[i-1].first);
     }
 }
